@@ -1,0 +1,40 @@
+#IBM Watson IOT Platform
+#pip install wiotp-sdk
+import wiotp.sdk.device
+import time
+import random
+myConfig = {
+    "identity": {
+        "orgId": "g1jxn7",
+        "typeId": "revanth",
+        "deviceId":"111419106032"
+},
+    "auth": {
+        "token": " bpc@UWeGn)7m+pjb53"
+} }
+def myCommandCallback(cmd):
+    print("Message received from IBM IoT Platform: %s" %
+    cmd.data['command'])
+    m=cmd.data['command']
+
+client = wiotp.sdk.device.DeviceClient(config=myConfig,
+logHandlers=None)
+client.connect()
+while True:
+    latitude=random.uniform(27.2046,125.25)
+    longitude=random.uniform(77.4977,100.1526)
+    binlevel=random.randint(10,100)
+    if binlevel >= 90:
+        myData={'latitude':latitude,'longitude':longitude,'binlevel':binlevel}
+        client.publishEvent(eventId="status",
+        msgFormat="json", data=myData, qos=0,
+        onPublish=None)
+##print("Published data Successfully: %s", myData)
+        print("BIN IS FULL!!!!",myData)
+        client.commandCallback = myCommandCallback
+        time.sleep(2)
+    else :
+        print("BIN IS IN NORMAL LEVEL")
+        time.sleep(2)
+        client.disconnect()
+
